@@ -1,8 +1,6 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Web.Mvc;
 using FormCollectionExtend.MVC;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace UnitTest
@@ -18,13 +16,13 @@ namespace UnitTest
         #region TestMethod
 
         /// <summary>
-        /// 將FormCollection轉為單一物件
+        /// Convert FormCollection To Single Object.
         /// </summary>
         [TestMethod]
         public void ToSingleObjectTest()
         {
             // Arrange
-            FormCollection Stub = TestDate();
+            FormCollection Stub = CreateTestData();
 
             // Act
             TestModel Test = Stub.ToSingleObject<TestModel>();
@@ -37,17 +35,17 @@ namespace UnitTest
             Assert.AreEqual(Test.CreatedDateTime, TestData.CreatedDateTime);
         }
         /// <summary>
-        /// 將FormCollection轉為單一物件 ( 例外對映 )
+        /// ToSingleObjectTestWithDictionary
         /// </summary>
         [TestMethod]
         public void ToSingleObjectTestWithDictionary()
         {
             // Arrange
-            FormCollection Stub = TestDateWithDifferentNaming();
-            Dictionary<string, string> Key = GetKey();
+            FormCollection Stub = CreateTestDataWithDifferentNaming();
+            Dictionary<string, string> MappingDictionary = CreateMappingDictionary();
 
             // Act
-            TestModel Test = Stub.ToSingleObject<TestModel>(Key);
+            TestModel Test = Stub.ToSingleObject<TestModel>(MappingDictionary);
 
             // Assert
             Assert.AreEqual(Test.Name.ToString(), TestData.Name.ToString());
@@ -64,7 +62,7 @@ namespace UnitTest
         public void ToListObjectTest()
         {
             // Arrange
-            FormCollection Stub = TestDateWithListType();
+            FormCollection Stub = CreateTestDataSet();
             string PrimaryKeyName = "Name";
             // Act
             List<TestModel> Test = Stub.ToListObject<TestModel>(PrimaryKeyName);
@@ -89,12 +87,12 @@ namespace UnitTest
         public void ToListObjectWithDictionary()
         {
             // Arrange
-            FormCollection Stub = TestDateWithListTypeAndDifferentNaming();
-            Dictionary<string, string> Key = GetKey();
+            FormCollection Stub = CreateTestDataSetWithDifferentNaming();
+            Dictionary<string, string> MappingDictionary = CreateMappingDictionary();
             string PrimaryKeyName = "Name111";
 
             // Act
-            List<TestModel> Test = Stub.ToListObject<TestModel>(Key, PrimaryKeyName);
+            List<TestModel> Test = Stub.ToListObject<TestModel>(MappingDictionary, PrimaryKeyName);
 
             // Assert
             foreach (var i in Test)
@@ -112,12 +110,11 @@ namespace UnitTest
         #region DataSource
 
         /// <summary>
-        /// Create FormCollection and added TestData
+        /// Create FormCollection and add TestData.
         /// </summary>
-        /// <returns>TestDate(Type:FormCollection)</returns>
-        FormCollection TestDate()
+        /// <returns>TestData</returns>
+        FormCollection CreateTestData()
         {
-            // 模擬後端接值時的FormCollection集合
             FormCollection Stub = new FormCollection();
             Stub.Add("Name", $"{TestData.Name}");
             Stub.Add("age", $"{TestData.age}");
@@ -129,12 +126,11 @@ namespace UnitTest
         }
 
         /// <summary>
-        /// Create FormCollection and added TestDateWithDifferentNaming
+        /// Create FormCollection and add TestDataWithDifferentNaming.
         /// </summary>
-        /// <returns>TestDate(Type:FormCollection)</returns>
-        FormCollection TestDateWithDifferentNaming()
+        /// <returns>TestData</returns>
+        FormCollection CreateTestDataWithDifferentNaming()
         {
-            // 模擬後端接值時的FormCollection集合 (前端欄位Name與後端物件屬性不同時)
             FormCollection Stub = new FormCollection();
             Stub.Add("Name111", $"{TestData.Name}");
             Stub.Add("age222", $"{TestData.age}");
@@ -146,12 +142,11 @@ namespace UnitTest
         }
 
         /// <summary>
-        /// Create FormCollection and added TestDateWithListType
+        /// Create FormCollection and add Test Data Set.
         /// </summary>
-        /// <returns>TestDate(Type:FormCollection)</returns>
-        FormCollection TestDateWithListType()
+        /// <returns>TestData</returns>
+        FormCollection CreateTestDataSet()
         {
-            // 模擬後端接值時的FormCollection集合
             FormCollection Stub = new FormCollection();
 
             for (int i = 1; i <= ListCount; i++)
@@ -167,12 +162,11 @@ namespace UnitTest
         }
 
         /// <summary>
-        /// Create FormCollection and added TestDateWithListTypeAndDifferentNaming
+        /// Create FormCollection and add Test Data Set With Different Naming.
         /// </summary>
-        /// <returns>TestDate(Type:FormCollection)</returns>
-        FormCollection TestDateWithListTypeAndDifferentNaming()
+        /// <returns>TestData</returns>
+        FormCollection CreateTestDataSetWithDifferentNaming()
         {
-            // 模擬後端接值時的FormCollection集合 (前端欄位Name與後端物件屬性不同時)
             FormCollection Stub = new FormCollection();
             for (int i = 1; i <= ListCount; i++)
             {
@@ -186,21 +180,21 @@ namespace UnitTest
             return Stub;
         }
         /// <summary>
-        /// 設定對映
+        /// Create Mapping Dictionary.
         /// </summary>
-        /// <returns>對映字典</returns>
-        Dictionary<string, string> GetKey()
+        /// <returns>Mapping Dictionary</returns>
+        Dictionary<string, string> CreateMappingDictionary()
         {
-            // 建立 前端欄位Name與後端物件屬性 對映字典
-            // Key.Add( "後端物件屬性", "前端欄位Name" );
-            Dictionary<string, string> Key = new Dictionary<string, string>();
-            Key.Add("Name", "Name111");
-            Key.Add("age", "age222");
-            Key.Add("PhoneNumber", "PhoneNumber333");
-            Key.Add("Married", "Married444");
-            Key.Add("CreatedDateTime", "CreatedDateTime555");
-            Key.Add("ModifyDateTime", "ModifyDateTime666");
-            return Key;
+            // Setting up mapping dictionary.
+            // Ex. Key.Add( "Model field", "Form name" );
+            Dictionary<string, string> Dictionary = new Dictionary<string, string>();
+            Dictionary.Add("Name", "Name111");
+            Dictionary.Add("age", "age222");
+            Dictionary.Add("PhoneNumber", "PhoneNumber333");
+            Dictionary.Add("Married", "Married444");
+            Dictionary.Add("CreatedDateTime", "CreatedDateTime555");
+            Dictionary.Add("ModifyDateTime", "ModifyDateTime666");
+            return Dictionary;
         }
 
         #endregion

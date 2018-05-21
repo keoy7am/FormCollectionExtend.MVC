@@ -1,27 +1,76 @@
 # FormCollectionExtend.MVC
-MVC FormCollection To Object Extend Library.
 
-* * *
-## About Method ##
-#### ToSingleObject(this FormCollection collection)
+## Synopsis ##
+
+MVC FormCollection To Object Extend Library.
+Easy Convert FormCollection To Object.
+
+## Features  ##
+- Convert FormCollection To Single Object
+- Convert FormCollection To Single Object with Mapping Dictionary
+- Convert FormCollection To List&lt;Object&gt;
+- Convert FormCollection To List&lt;Object&gt; with Mapping Dictionary
+
+## Examples ##
+
+### ToSingleObject(this FormCollection collection) ###
+
 Convert FormCollection To Single Object.
-#### ToSingleObject(this FormCollection collection, Dictionary<string, string> MappingDictionary)
+
+```csharp
+            // Arrange
+            FormCollection Stub = CreateTestData();
+
+            // Act
+            TestModel Test = Stub.ToSingleObject<TestModel>();
+```
+### ToSingleObject(this FormCollection collection, Dictionary<string, string> MappingDictionary) ###
+
 Convert FormCollection To Single Object with Mapping Dictionary.
-#### ToListObject(this FormCollection collection)
+
+```csharp
+            // Arrange
+            FormCollection Stub = CreateTestDataWithDifferentNaming();
+            Dictionary<string, string> MappingDictionary = CreateMappingDictionary();
+
+            // Act
+            TestModel Test = Stub.ToSingleObject<TestModel>(MappingDictionary);
+```
+
+### ToListObject(this FormCollection collection) ###
+
 Convert FormCollection To List&lt;Object&gt;.
-#### ToListObjectWithMappingDictionary(this FormCollection collection, Dictionary<string, string> MappingDictionary)
+
+```csharp
+            // Arrange
+            FormCollection Stub = CreateTestDataSet();
+            string PrimaryKeyName = "Name";
+            // Act
+            List<TestModel> Test = Stub.ToListObject<TestModel>(PrimaryKeyName);
+```
+
+### ToListObjectWithMappingDictionary(this FormCollection collection, Dictionary<string, string> MappingDictionary) ###
+
 Convert FormCollection To List&lt;Object&gt; with Mapping Dictionary.
 
+```csharp
+            // Arrange
+            FormCollection Stub = CreateTestDataSetWithDifferentNaming();
+            Dictionary<string, string> MappingDictionary = CreateMappingDictionary();
+            string PrimaryKeyName = "Name111";
 
-* * *
-## About Mapping Dictionary ##
+            // Act
+            List<TestModel> Test = Stub.ToListObject<TestModel>(MappingDictionary, PrimaryKeyName);
+```
+
+### About Mapping Dictionary ###
+
 Example：
-<pre><code>
-Dictionary<string, string> GetKey()
+```csharp
+Dictionary<string, string> CreateMappingDictionary()
         {
-            // 建立 前端欄位Name與後端物件屬性 映射字典
             // Key.Add( "後端物件屬性", "前端表單欄位Name" );
-            // Key.Add( "Object Property", "Form Name" );
+            // Key.Add( "Model Object Property", "Form Field Name" );
             Dictionary<string, string> Key = new Dictionary<string, string>();
             Key.Add("Name", "Name111");
             Key.Add("age", "age222");
@@ -31,4 +80,4 @@ Dictionary<string, string> GetKey()
             Key.Add("ModifyDateTime", "ModifyDateTime666");
             return Key;
         }
-</code></pre>
+```

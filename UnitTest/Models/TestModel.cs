@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace UnitTest
 {
+    /// <summary>
+    /// Simulate Data Model.
+    /// </summary>
     public class TestModel
     {
-        /*  TestModel
-            資料模型
-             */
         public string Name { get; set; }
         public int age { get; set; }
         public long PhoneNumber { get; set; }

@@ -11,13 +11,10 @@ namespace FormCollectionExtend.MVC
     public static class FormCollectionExtend
     {
         /* FormCollection To Object Extend Library */
-        // TODO Check Performace
-        // TODO Exception Handle
-
         
         #region 轉換單一物件
         /// <summary>
-        /// 將FormCollection轉為單一物件
+        /// Convert FormCollection To Single Object.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
@@ -27,21 +24,21 @@ namespace FormCollectionExtend.MVC
             IList<PropertyInfo> properties = typeof(T).GetProperties().ToList();
 
             T result = new T();
+            CheckProperty(properties);
 
-            if (CheckAccessors(properties))
-                foreach (var property in properties)
-                {
-                    Type conversionType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                    object Value = null;
-                    Value = (collection.GetValues(property.Name)[0] == null) ? null : Convert.ChangeType(collection.GetValues(property.Name)[0], conversionType);
-                    property.SetValue(result, Value, null);
-                    //property.SetValue(result, Convert.ChangeType(collection.GetValues(property.Name)[0], property.PropertyType), null);
-                }
+            foreach (var property in properties)
+            {
+                if (!property.CanWrite) { continue; }
+                Type conversionType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                object Value = null;
+                Value = (collection.GetValues(property.Name)[0] == null) ? null : Convert.ChangeType(collection.GetValues(property.Name)[0], conversionType);
+                property.SetValue(result, Value, null);
+            }
             return result;
         }
 
         /// <summary>
-        /// 將FormCollection轉為單一物件 ( 例外對映 )
+        /// Convert FormCollection To Single Object With Dictionary.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
@@ -51,13 +48,15 @@ namespace FormCollectionExtend.MVC
             IList<PropertyInfo> properties = typeof(T).GetProperties().ToList();
 
             T result = new T();
+            CheckProperty(properties);
 
-            if (CheckAccessors(properties))
-                foreach (var property in properties)
+            foreach (var property in properties)
+            {
+                Type conversionType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                object Value = null;
+                if (!property.CanWrite) { continue; }
+                try
                 {
-                    Type conversionType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                    object Value = null;
-
                     if (Key.ContainsKey(property.Name))
                     {
                         Value = (collection.GetValues(Key[property.Name])[0] == null) ? null : Convert.ChangeType(collection.GetValues(Key[property.Name])[0], conversionType);
@@ -65,17 +64,15 @@ namespace FormCollectionExtend.MVC
                     }
                     else
                     {
-                        try
-                        {
-                            Value = (collection.GetValues(property.Name)[0] == null) ? null : Convert.ChangeType(collection.GetValues(property.Name)[0], conversionType);
-                            property.SetValue(result, Value, null);
-                        }
-                        catch
-                        {
-
-                        }
+                        Value = (collection.GetValues(property.Name)[0] == null) ? null : Convert.ChangeType(collection.GetValues(property.Name)[0], conversionType);
+                        property.SetValue(result, Value, null);
                     }
                 }
+                catch
+                {
+                    continue;
+                }
+            }
 
             return result;
         }
@@ -85,75 +82,75 @@ namespace FormCollectionExtend.MVC
         #region 轉換為List型別物件
 
         /// <summary>
-        /// 將FormCollection轉為List形別物件
+        /// Convert FormCollection To List<Object>.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
         /// <returns></returns>
-        public static List<T> ToListObject<T>(this FormCollection collection, string check) where T : new()
+        public static List<T> ToListObject<T>(this FormCollection collection, string PrimaryKeyName) where T : new()
         {
             IList<PropertyInfo> properties = typeof(T).GetProperties().ToList();
             List<T> result = new List<T>();
-            int counter = collection.GetValues(check.Trim()).Count();
+            int counter = collection.GetValues(PrimaryKeyName.Trim()).Count();
+            CheckProperty(properties);
 
-            if (CheckAccessors(properties))
-                for (int i = 0; i < counter; i++)
+            for (int i = 0; i < counter; i++)
+            {
+                T item = new T();
+                foreach (var property in properties)
                 {
-                    T item = new T();
-                    foreach (var property in properties)
-                    {
-                        Type conversionType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                        object Value = null;
-                        Value = Convert.ChangeType(collection.GetValues(property.Name)[i], conversionType);
-                        property.SetValue(item, Value, null);
-                    }
-                    result.Add(item);
+                    if (!property.CanWrite) { continue; }
+                    Type conversionType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                    object Value = null;
+                    Value = Convert.ChangeType(collection.GetValues(property.Name)[i], conversionType);
+                    property.SetValue(item, Value, null);
                 }
+                result.Add(item);
+            }
 
             return result;
         }
 
         /// <summary>
-        /// 將FormCollection轉為List形別物件 ( 例外對映 )
+        /// Convert FormCollection To List<Object> With Dictionary.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
         /// <returns></returns>
-        public static List<T> ToListObject<T>(this FormCollection collection, Dictionary<string, string> Key, string check) where T : new()
+        public static List<T> ToListObject<T>(this FormCollection collection, Dictionary<string, string> Key, string PrimaryKeyName) where T : new()
         {
             IList<PropertyInfo> properties = typeof(T).GetProperties().ToList();
             List<T> result = new List<T>();
-            int counter = collection.GetValues(check.Trim()).Count();
-
-            if (CheckAccessors(properties))
-                for (int i = 0; i < counter; i++)
+            int counter = collection.GetValues(PrimaryKeyName.Trim()).Count();
+            CheckProperty(properties);
+            for (int i = 0; i < counter; i++)
+            {
+                T item = new T();
+                foreach (var property in properties)
                 {
-                    T item = new T();
-                    foreach (var property in properties)
+                    Type conversionType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                    object Value = null;
+                    if (!property.CanWrite) { continue; }
+                    try
                     {
-                        Type conversionType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                        object Value = null;
                         if (Key.ContainsKey(property.Name))
                         {
                             Value = (collection.GetValues(Key[property.Name])[i] == null) ? null : Convert.ChangeType(collection.GetValues(Key[property.Name])[i], conversionType);
                             property.SetValue(item, Value, null);
-
                         }
                         else
                         {
-                            try
-                            {
-                                Value = (collection.GetValues(property.Name)[i] == null) ? null : Convert.ChangeType(collection.GetValues(property.Name)[i], conversionType);
-                                property.SetValue(item, Value, null);
-                            }
-                            catch
-                            {
-
-                            }
+                            Value = (collection.GetValues(property.Name)[i] == null) ? null : Convert.ChangeType(collection.GetValues(property.Name)[i], conversionType);
+                            property.SetValue(item, Value, null);
                         }
                     }
-                    result.Add(item);
+                    catch
+                    {
+                        continue;
+                    }
                 }
+                result.Add(item);
+            }
             return result;
         }
         #endregion
@@ -163,13 +160,9 @@ namespace FormCollectionExtend.MVC
         /// </summary>
         /// <param name="properties"></param>
         /// <returns></returns>
-        private static bool CheckAccessors(IList<PropertyInfo> properties)
+        private static void CheckProperty(IList<PropertyInfo> properties)
         {
-            if (properties.Count > 0) { return true; }
-            else
-            {
-                throw new Exception($"The Class didn't Declare the Accessors!");
-            }
+            if (properties.Count == 0) { throw new Exception("The Class Didn't Declare The Property!"); }
         }
     }
 }
