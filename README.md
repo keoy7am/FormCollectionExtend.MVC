@@ -1,9 +1,14 @@
-# FormCollectionExtend.MVC
+# [FormCollectionExtend.MVC](https://github.com/keoy7am/FormCollectionExtend.MVC) #
 
-## Synopsis ##
+MVC FormCollection To Object Extend Library.  
+Easy Convert FormCollection To Object.  
+Click [here](https://github.com/keoy7am/FormCollectionExtend.MVC/blob/master/UnitTest/UnitTest.cs) to check our UnitTest example.  
 
-MVC FormCollection To Object Extend Library.
-Easy Convert FormCollection To Object.
+### [NuGet](https://www.nuget.org/packages/FormCollectionExtend.MVC/1.0.1) ###
+- Package Manager
+  - Install-Package FormCollectionExtend.MVC -Version 1.0.1
+- .NET CLI
+  - dotnet add package FormCollectionExtend.MVC --version 1.0.1
 
 ## Features  ##
 - Convert FormCollection To Single Object

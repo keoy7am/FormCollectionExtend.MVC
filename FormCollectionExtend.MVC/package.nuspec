@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>FormCollectionExtend.MVC</id>
+    <version>1.0.1</version>
+    <title>FormCollectionExtend.MVC</title>
+    <authors>keoy7am</authors>
+    <owners>keoy7am</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>https://github.com/keoy7am/FormCollectionExtend.MVC</projectUrl>
+    <description>MVC FormCollection To Object Extend Library.
+Easy Convert FormCollection To Object.</description>
+    <summary>MVC FormCollection To Object Extend Library.</summary>
+    <releaseNotes>Update property check and make sure property can write.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>MVC FormCollection</tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.Mvc" version="5.0.0" />
+    </dependencies>
+  </metadata>
+</package>
