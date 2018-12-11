@@ -28,11 +28,18 @@ namespace FormCollectionExtend.MVC
 
             foreach (var property in properties)
             {
-                if (!property.CanWrite) { continue; }
-                Type conversionType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                object Value = null;
-                Value = (collection.GetValues(property.Name)[0] == null) ? null : Convert.ChangeType(collection.GetValues(property.Name)[0], conversionType);
-                property.SetValue(result, Value, null);
+                try
+                {
+                    if (!property.CanWrite) { continue; }
+                    Type conversionType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                    object Value = null;
+                    Value = (collection.GetValues(property.Name)[0] == null) ? null : Convert.ChangeType(collection.GetValues(property.Name)[0], conversionType);
+                    property.SetValue(result, Value, null);
+                }
+                catch
+                {
+                    continue;
+                }
             }
             return result;
         }
