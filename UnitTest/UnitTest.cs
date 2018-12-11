@@ -35,6 +35,25 @@ namespace UnitTest
             Assert.AreEqual(Test.CreatedDateTime, TestData.CreatedDateTime);
         }
         /// <summary>
+        /// Convert FormCollection To Single Object With Empty Field.
+        /// </summary>
+        [TestMethod]
+        public void ToSingleObjectTestWithEmptyField()
+        {
+            // Arrange
+            FormCollection Stub = CreateTestDataWithEmptyField();
+
+            // Act
+            TestModel Test = Stub.ToSingleObject<TestModel>();
+
+            // Assert
+            Assert.AreEqual(Test.Name, null); // It should be null
+            Assert.AreEqual(Test.age, TestData.age);
+            Assert.AreEqual(Test.PhoneNumber, TestData.PhoneNumber);
+            Assert.AreEqual(Test.Married, TestData.Married);
+            Assert.AreEqual(Test.CreatedDateTime, TestData.CreatedDateTime);
+        }
+        /// <summary>
         /// ToSingleObjectTestWithDictionary
         /// </summary>
         [TestMethod]
@@ -117,6 +136,21 @@ namespace UnitTest
         {
             FormCollection Stub = new FormCollection();
             Stub.Add("Name", $"{TestData.Name}");
+            Stub.Add("age", $"{TestData.age}");
+            Stub.Add("PhoneNumber", $"{TestData.PhoneNumber}");
+            Stub.Add("Married", $"{TestData.Married}");
+            Stub.Add("CreatedDateTime", $"{TestData.CreatedDateTime}");
+            Stub.Add("ModifyDateTime", $"{TestData.ModifyDateTime}");
+            return Stub;
+        }
+        /// <summary>
+        /// Create FormCollection and add TestData with empty field.
+        /// </summary>
+        /// <returns>TestData</returns>
+        FormCollection CreateTestDataWithEmptyField()
+        {
+            FormCollection Stub = new FormCollection();
+            //Stub.Add("Name", $"{TestData.Name}"); // comment out this one,when data after mapping,this field should be null.
             Stub.Add("age", $"{TestData.age}");
             Stub.Add("PhoneNumber", $"{TestData.PhoneNumber}");
             Stub.Add("Married", $"{TestData.Married}");
